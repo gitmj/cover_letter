@@ -19,16 +19,20 @@ st.set_page_config(page_title="Cover letter", page_icon="🤖", layout="wide")
 
 max_resume_page = 2
 
+max_context_size = 4096
+
 def read_resume(file):
     resume = ""
     with pdfplumber.open(file) as pdf:
         pages = pdf.pages
         if (len(pages) > max_resume_page):
           st.session_state.text_error = "Resume too long." + " Max supported page: " + str(max_resume_page)
-          logging.info(f"File name: {file_name} too big\n")
+          logging.info(f"File name: {file} too big\n")
+          st.error(st.session_state.text_error)
           return ""
         for p in pages:
             resume = resume + p.extract_text()
+    logging.info("Number of words in resume: " + str(len(resume.split())))
     return resume
 
 def resume_upload_callback():
@@ -38,8 +42,22 @@ def resume_upload_callback():
 
 def job_description_callback():
   if st.session_state["job_description_input"] is not None:
-    logging.info("job callback: " + st.session_state["job_description_input"])
+    logging.info("Number of words in job description: " +
+      str(len(st.session_state.job_description_input.split())))
 
+def prompt_tunning(resume_text: str, job_description: str, letter_size: int):
+  prompt = "Write a cover letter with following resume and job description: "
+  prompt = prompt + resume_text + job_description
+  num_prompt_words = len(prompt.split())
+  if (num_prompt_words + letter_size > max_context_size):
+    err_str = f"Prompt + letter size are too big to handle: {num_prompt_words} and {letter_size}"
+    st.session_state.text_error = err_str
+    logging.info(err_str)
+    st.error(err_str)
+    return None
+
+  logging.info("Number of words in prompt: " + str(num_prompt_words))
+  return prompt
 
 def generate_letter(resume_text: str, job_description: str):
   if st.session_state.n_requests >= 5:
@@ -48,14 +66,24 @@ def generate_letter(resume_text: str, job_description: str):
     st.session_state.n_requests = 1
     return
 
-  logging.info(resume_text)
-  logging.info(job_description)
+  if not resume_text:
+    err_str = "Resume is empty"
+    logging.info(err_str)
+    st.error(err_str)
+    return
+
+  if not job_description:
+    err_str = "Job description is empty"
+    logging.info(err_str)
+    st.error(err_str)
+    return
+
   #with text_spinner_placeholder:
   with st.spinner("Please wait while your letter is being generated..."):
-    prompt = (
-      f"Write a cover letter with following resume and job description: "
-      f"Resume: {resume_text} and job description: {job_description} \n\n"
-      )
+    prompt = prompt_tunning(resume_text, job_description, st.session_state.letter_size)
+    if not prompt:
+      logging.info (f"Couldn't configure prompt successfully")
+      return
 
     openai = openai_wrapper.Openai()
     flagged = openai.moderate(prompt)
@@ -106,7 +134,7 @@ with st.container():
   with col1:
     title = "Personalized Cover Letter!!"
     st.title(title)
-    st.markdown("No account signup, Just provide your resume and job description and get custom cover letter.")
+    st.markdown("No account signup, Just provide your resume and job description to get personalized cover letter.")
     st.markdown("Generated via OpenAI's ChatGPT [Davinci model](https://beta.openai.com/docs/models/overview).")
     st.markdown("Author's [LinkedIn](https://www.linkedin.com/in/manoj-tiwari-17b9213/). Feel free to connect!")
     resume_file = st.file_uploader("Choose your resume .pdf file", type="pdf",
@@ -118,13 +146,13 @@ with st.container():
 
     letter_size = st.radio(
     "Please select letter size (in number of words)",
-    ('Small (200)', 'Medium (400)', 'Large (600)'))
-    if letter_size == "Small":
-      st.session_state.letter_size = 100
-    elif letter_size == "Medium":
+    ('Small (200)', 'Medium (400)', 'Large (600)'), index = 1)
+    if letter_size == "Small (200)":
       st.session_state.letter_size = 200
+    elif letter_size == "Medium (400)":
+      st.session_state.letter_size = 400
     else:
-      st.session_state.letter_size = 300
+      st.session_state.letter_size = 600
 
     st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 
@@ -138,7 +166,7 @@ with st.container():
   with col2:
     components.html(
     f'<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/effective-cover-letters?default_interval=o&amount=1" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="auto" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>',
-    height=600,
+    height=650,
     )
     
   #text_spinner_placeholder = st.empty()
