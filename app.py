@@ -86,7 +86,7 @@ if "cover_letter" not in st.session_state:
   st.session_state.cover_letter = ""
 
 if "letter_size" not in st.session_state:
-  st.session_state.letter_size = 100 # small
+  st.session_state.letter_size = 200 # small
 
 if "resume_ctr" not in st.session_state:
   st.session_state.resume_ctr = 0
@@ -125,7 +125,7 @@ with st.container():
 
     letter_size = st.radio(
     "Please select letter size (in number of words)",
-    ('Small (100)', 'Medium (200)', 'Large (300)'))
+    ('Small (200)', 'Medium (400)', 'Large (600)'))
     if letter_size == "Small":
       st.session_state.letter_size = 100
     elif letter_size == "Medium":

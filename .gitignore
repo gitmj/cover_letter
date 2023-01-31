@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 #Streamlit secret
-.streamlit
+.streamlit/secrets.toml
 logs.txt
