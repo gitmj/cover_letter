@@ -17,7 +17,7 @@ logging.basicConfig(format="\n%(asctime)s\n%(message)s", level=logging.INFO, for
 
 st.set_page_config(page_title="Cover letter", page_icon="🤖", layout="wide")
 
-max_resume_page = 3
+max_resume_page = 2
 
 def read_resume(file):
     resume = ""
@@ -116,13 +116,6 @@ with st.container():
       on_change=job_description_callback,
       key="job_description_input")
 
-    st.button(
-        label="Generate cover letter",
-        type="primary",
-        on_click=generate_letter,
-        args=(st.session_state["resume_text"], st.session_state["job_description_input"]),
-        )
-
     letter_size = st.radio(
     "Please select letter size (in number of words)",
     ('Small (200)', 'Medium (400)', 'Large (600)'))
@@ -133,10 +126,19 @@ with st.container():
     else:
       st.session_state.letter_size = 300
 
+    st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
+
+    st.button(
+        label="Generate cover letter",
+        type="primary",
+        on_click=generate_letter,
+        args=(st.session_state["resume_text"], st.session_state["job_description_input"]),
+        )
+
   with col2:
     components.html(
-    f'<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/effective-cover-letters?default_interval=o&amount=1" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>',
-    height=550,
+    f'<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/effective-cover-letters?default_interval=o&amount=1" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="auto" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>',
+    height=600,
     )
     
   #text_spinner_placeholder = st.empty()
