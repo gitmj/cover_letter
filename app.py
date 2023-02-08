@@ -130,53 +130,44 @@ if "text_error" not in st.session_state:
 
 # Render main page
 with st.container():
-  col1, col2 = st.columns(2)
-  with col1:
-    title = "Personalized Cover Letter!!"
-    st.title(title)
-    st.markdown("No account signup, Just provide your resume and job description to get personalized cover letter.")
-    st.markdown("Generated via OpenAI's ChatGPT [Davinci model](https://beta.openai.com/docs/models/overview).")
-    st.markdown("Author's [LinkedIn](https://www.linkedin.com/in/manoj-tiwari-17b9213/). Feel free to connect!")
-    resume_file = st.file_uploader("Choose your resume .pdf file", type="pdf",
-      on_change=resume_upload_callback, key="resume_uploader")
+  #col1, col2 = st.columns(2)
+  #with col1:
+  title = "Personalized Cover Letter!!"
+  st.title(title)
+  st.markdown("No account signup, Just provide your resume and job description to get personalized cover letter.")
+  st.markdown("Generated via OpenAI's ChatGPT [Davinci model](https://beta.openai.com/docs/models/overview).")
+  st.markdown("Author's [LinkedIn](https://www.linkedin.com/in/manoj-tiwari-17b9213/). Feel free to connect!")
+  resume_file = st.file_uploader("Choose your resume .pdf file", type="pdf",
+    on_change=resume_upload_callback, key="resume_uploader")
 
-    st.text_input(label="Job Description", placeholder="Enter job description",
-      on_change=job_description_callback,
-      key="job_description_input")
+  st.text_input(label="Job Description", placeholder="Enter job description",
+    on_change=job_description_callback,
+    key="job_description_input")
 
-    letter_size = st.radio(
-    "Please select letter size (in number of words)",
-    ('Small (200)', 'Medium (400)', 'Large (600)'), index = 1)
-    if letter_size == "Small (200)":
-      st.session_state.letter_size = 200
-    elif letter_size == "Medium (400)":
-      st.session_state.letter_size = 400
-    else:
-      st.session_state.letter_size = 600
+  letter_size = st.radio(
+  "Please select letter size (in number of words)",
+  ('Small (200)', 'Medium (400)', 'Large (600)'), index = 1)
+  if letter_size == "Small (200)":
+    st.session_state.letter_size = 200
+  elif letter_size == "Medium (400)":
+    st.session_state.letter_size = 400
+  else:
+    st.session_state.letter_size = 600
 
-    st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
+  st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 
-    st.button(
-        label="Generate cover letter",
-        type="primary",
-        on_click=generate_letter,
-        args=(st.session_state["resume_text"], st.session_state["job_description_input"]),
-        )
+  st.button(
+      label="Generate cover letter",
+      type="primary",
+      on_click=generate_letter,
+      args=(st.session_state["resume_text"], st.session_state["job_description_input"]),
+      )
 
-  with col2:
+  #with col2:
     #components.html(
     #f'<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/effective-cover-letters?default_interval=o&amount=1" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="auto" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>',
     #height=650,
     #)
-    total_cost = str((st.session_state.total_tokens_used / 1000) * 0.02)
-    # make it red & bold
-    total_cost = f"**:red[${total_cost}]**"
-    st.markdown("Total cost incurred: " + total_cost +
-      " (Please support the service if you like your cover letter!!)")
-    components.html(
-    f'<a style="background: #434d58 url(https://donorbox.org/images/red_logo.png) no-repeat 37px;color: #fff;text-decoration: none;font-family: Verdana,sans-serif;display: inline-block;font-size: 16px;padding: 15px 38px;padding-left: 75px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 2px;box-shadow: 0 1px 0 0 #1f5a89;text-shadow: 0 1px rgba(0, 0, 0, 0.3);" href="https://donorbox.org/effective-cover-letters">Donate</a>',
-    height=650,
-    )
     
   #text_spinner_placeholder = st.empty()
   if st.session_state.text_error:
@@ -186,6 +177,7 @@ with st.container():
   st.markdown("""---""")
 
   st.text_area(label="Cover Letter", value=st.session_state.cover_letter, height=500)
+
 
 contact_form = """
 <form action="https://formsubmit.co/manoj41@gmail.com" method="POST">
@@ -206,3 +198,14 @@ def local_css(file_name):
 
 
 local_css("style/style.css")
+
+# Donatoin box
+total_cost = str((st.session_state.total_tokens_used / 1000) * 0.02)
+# make it red & bold
+total_cost = f"**:red[${total_cost}]**"
+st.markdown("Total cost incurred: " + total_cost +
+  " (Please support the service if you like your cover letter!!)")
+components.html(
+f'<a style="background: #434d58 url(https://donorbox.org/images/red_logo.png) no-repeat 37px;color: #fff;text-decoration: none;font-family: Verdana,sans-serif;display: inline-block;font-size: 16px;padding: 15px 38px;padding-left: 75px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 2px;box-shadow: 0 1px 0 0 #1f5a89;text-shadow: 0 1px rgba(0, 0, 0, 0.3);" href="https://donorbox.org/effective-cover-letters">Donate</a>',
+height=700,
+)
