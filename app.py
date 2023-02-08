@@ -164,8 +164,17 @@ with st.container():
         )
 
   with col2:
+    #components.html(
+    #f'<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/effective-cover-letters?default_interval=o&amount=1" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="auto" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>',
+    #height=650,
+    #)
+    total_cost = str((st.session_state.total_tokens_used / 1000) * 0.02)
+    # make it red & bold
+    total_cost = f"**:red[${total_cost}]**"
+    st.markdown("Total cost incurred: " + total_cost +
+      " (Please support the service if you like your cover letter!!)")
     components.html(
-    f'<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/effective-cover-letters?default_interval=o&amount=1" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="auto" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>',
+    f'<a style="background: #434d58 url(https://donorbox.org/images/red_logo.png) no-repeat 37px;color: #fff;text-decoration: none;font-family: Verdana,sans-serif;display: inline-block;font-size: 16px;padding: 15px 38px;padding-left: 75px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 2px;box-shadow: 0 1px 0 0 #1f5a89;text-shadow: 0 1px rgba(0, 0, 0, 0.3);" href="https://donorbox.org/effective-cover-letters">Donate</a>',
     height=650,
     )
     
@@ -175,11 +184,6 @@ with st.container():
 
   # if st.session_state.cover_letter:
   st.markdown("""---""")
-  total_cost = str((st.session_state.total_tokens_used / 1000) * 0.02)
-  # make it red & bold
-  total_cost = f"**:red[${total_cost}]**"
-  st.markdown("Total cost incurred: " + total_cost +
-    " (Please support the service if you like your cover letter!!)")
 
   st.text_area(label="Cover Letter", value=st.session_state.cover_letter, height=500)
 
