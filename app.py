@@ -96,6 +96,10 @@ def generate_letter(resume_text: str, job_description: str):
       st.session_state.n_requests += 1
 
       response = openai.complete(prompt, 0, st.session_state.letter_size)
+      if (len(response) == 0):
+        st.session_state.text_error = "Empty response received from OpenAI API."
+        return
+
       st.session_state.cover_letter = response[0]
       st.session_state.total_tokens_used = st.session_state.total_tokens_used + response[1] 
 
